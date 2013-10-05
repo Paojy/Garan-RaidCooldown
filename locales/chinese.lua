@@ -1,4 +1,4 @@
-if GetLocale() == "zhCN" then return end
+if GetLocale() ~= "zhCN" then return end
 local RDCD = RDCD
 
 RDCD.L["|cffA6FFFFGaran-团队冷却|r："] = "|cffA6FFFFGaran-团队冷却|r："
