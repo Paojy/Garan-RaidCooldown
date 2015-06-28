@@ -1,6 +1,6 @@
 ﻿if not RDCD then return end
 local RDCD = RDCD
-local LGIST=LibStub:GetLibrary("LibGroupInSpecT-1.0")
+local LGIST=LibStub:GetLibrary("LibGroupInSpecT-1.1")
 local addon_name = "Garan-RaidCooldown"
 
 local activebars = {}
@@ -164,11 +164,11 @@ function RDCD:GroupIndexButton_OnClick(self, button)
 				if activebars[i].groupind == self.groupind then
 					if UnitInRaid(player) or UnitInParty(player) then
 						if self.groupind == 0 then
-							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "RAID")
-							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "WHISPER", nil, player)
+							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "RAID")
+							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "WHISPER", nil, player)
 						else
-							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "RAID")
-							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "WHISPER", nil, player)
+							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "RAID")
+							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "WHISPER", nil, player)
 						end
 					else
 						print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
@@ -329,11 +329,11 @@ function RDCD:AncGroupIndex()
 				local player = select(6, GetPlayerInfoByGUID(activebars[i].guid)) or ""
 				if UnitInRaid(player) or UnitInParty(player) then
 					if i == 1 then
-						SendChatMessage(format(RDCD.L["===技能分组 %d ==="], activebars[i].groupind), "RAID")
+						SendChatMessage(format(RDCD.L["技能分组2"], activebars[i].groupind), "RAID")
 						SendChatMessage("["..activebars[i].groupind.."]"..player.."--"..GetSpellLink(activebars[i].spell), "RAID")
 						SendChatMessage("["..activebars[i].groupind.."]"..GetSpellLink(activebars[i].spell), "WHISPER", nil, player)
 					elseif activebars[i].groupind > activebars[i-1].groupind then
-						SendChatMessage(format(RDCD.L["===技能分组 %d ==="], activebars[i].groupind), "RAID")
+						SendChatMessage(format(RDCD.L["技能分组2"], activebars[i].groupind), "RAID")
 						SendChatMessage("["..activebars[i].groupind.."]"..player.."--"..GetSpellLink(activebars[i].spell), "RAID")
 						SendChatMessage("["..activebars[i].groupind.."]"..GetSpellLink(activebars[i].spell), "WHISPER", nil, player)
 					else
