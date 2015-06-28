@@ -17,6 +17,20 @@ RDCD.frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 15, -190)
 RDCD.frame:SetSize(130, 8)
 RDCD.frame:SetFrameStrata("MEDIUM")
 RDCD.frame:SetFrameLevel(1)
+
+
+--[[
+	GetSpecializationInfoForClassID(classID, specNum)
+	
+	1战士 狂暴72 武器71 防御73
+	2骑士 惩戒70 神圣65 防护66
+	3猎人 射击254 野兽253 生存255
+	4盗贼 刺杀259 战斗260 敏锐261
+	5牧师 戒律256 暗影258 神圣257
+	6死骑 鲜血250 冰霜251 邪恶252
+	7萨满 元素262 增强263 恢复264
+	8法师 奥术62 火焰63 冰霜64
+]]--
 ------------------------------------------------------
 ------------------[[  Cooldowns  ]]-------------------
 ------------------------------------------------------
@@ -30,6 +44,7 @@ RDCD.cooldowns = {
 		CD = 180,
 		cast = 6,
 		class = "PALADIN",
+		spec = 65,
 	},
 	[6940] = { -- Hand of Sacrifice 牺牲之手
 		index = 201,
@@ -37,6 +52,14 @@ RDCD.cooldowns = {
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 120,
 		cast = 12,
+		class = "PALADIN",
+	},
+	[1022] = { -- 保护之手
+		index = 202,
+		name = "HOP",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 300,
+		cast = 10,
 		class = "PALADIN",
 	},
 -- Priest
@@ -50,7 +73,7 @@ RDCD.cooldowns = {
 		spec = 256,
 	},
 	[33206] = { -- Pain Suppression 痛苦压制
-		index = 202,
+		index = 203,
 		name = "PS",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
@@ -68,7 +91,7 @@ RDCD.cooldowns = {
 		spec = 257,
 	},	
 	[47788] = { -- Guardian Spirit 守护之魂
-		index = 203,
+		index = 204,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "GS",
 		CD = 180,
@@ -76,21 +99,6 @@ RDCD.cooldowns = {
 		class = "PRIEST", 
 		spec = 257,
 	},	
-	[108968] = { -- Void Shift 虚空转移
-		index = 204,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "VS",
-		CD = 360,
-		class = "PRIEST",
-	},
-	[64901] = { -- Hymn Of Hope 希望圣歌
-		index = 301,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "HH",
-		CD = 360, 
-		cast = 8,
-		class = "PRIEST",
-	},
 -- Druid
 	[740] = { -- Tranquility 宁静
 		index = 104,
@@ -116,14 +124,6 @@ RDCD.cooldowns = {
 		CD = 600,
 		class = "DRUID",
 	},
-	--{ -- Innervate 激活
-		--index = 403,
-		--spellID = 29166,
-		--succ = "SPELL_CAST_SUCCESS",
-		--name = "I",
-		--CD = 180,
-		--class = "DRUID",
-	--},
 -- Shaman
 	[98008] = { -- Spirit Link Totem 灵魂链接图腾
 		index = 104,
@@ -134,15 +134,6 @@ RDCD.cooldowns = {
 		class = "SHAMAN", 
 		spec = 264,
 	},
-	[16190] = { -- Mana Tide Totem 法力之潮图腾
-		index = 402,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "MTT",
-		CD = 180,
-		cast = 12,
-		class = "SHAMAN",
-		spec = 264,
-	},
 	[108280] = { -- Healing Tide Totem 治疗之潮图腾
 		index = 105,
 		succ = "SPELL_CAST_SUCCESS",
@@ -151,23 +142,7 @@ RDCD.cooldowns = {
 		class = "SHAMAN",
 		--talent = 5,
 	},
-	[120668] = { -- Stormlash Totem 风暴之鞭图腾
-		index = 501,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "ST",
-		CD = 300,
-		cast = 10,
-		class = "SHAMAN",
-	},
  -- Monk
-	[115176] = { -- Zen Meditation 禅悟冥思
-		index = 106,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "ZEN",
-		CD = 180,
-		cast = 8,
-		class = "MONK",
-	},
 	[116849] = {	-- Life Cocoon 作茧缚命
 		index = 206,
 		succ = "SPELL_CAST_SUCCESS",
@@ -184,15 +159,6 @@ RDCD.cooldowns = {
 		CD = 180,
 		class = "MONK",
 		spec = 270,
-	},
-	[115213] = {	-- 慈悲庇护
-		index = 108,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "CIBEI",
-		CD = 180,
-		cast = 6,
-		class = "MONK",
-		spec = 268,
 	},
 	--[115072] = {	-- 移花接木
 		--index = 109,
@@ -235,22 +201,6 @@ RDCD.cooldowns = {
 		cast = 10,
 		class = "WARRIOR",
 	},
-	[114203] = { -- Demoralizing Banner 挫志战旗
-		index = 112,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "DB",
-		CD = 180,
-		cast = 15,
-		class = "WARRIOR",
-	},
-	[114207] = { -- Skull Banner 颅骨战旗
-		index = 503,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "SB",
-		CD = 180,
-		cast = 10,
-		class = "WARRIOR",
-	},
 --Rogue
 	[76577] = { -- Smoke Bomb 烟雾弹
 		index = 113,
@@ -268,6 +218,11 @@ RDCD.cooldownReduction = {
 				spellID = 740,
 				CD = 180,
 				spec = 105,
+			},
+	[6940] = { -- Hand of Sacrifice 牺牲之手 惩戒骑一分半
+				spellID = 740,
+				CD = 90,
+				spec = 70,
 			},
 }
 
