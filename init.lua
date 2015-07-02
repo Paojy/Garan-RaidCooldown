@@ -104,9 +104,10 @@ RDCD.cooldowns = {
 		index = 104,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "T",
-		CD = 480,
+		CD = 180,
 		cast = 8,
 		class = "DRUID",
+		spec = 105,
 	},
 	[102342] = { -- Ironbark 铁木树皮
 		index = 205,
@@ -214,11 +215,6 @@ RDCD.cooldowns = {
 --------------------------------------------------------
 
 RDCD.cooldownReduction = {
-	[740] = { -- Tranquility 宁静
-				spellID = 740,
-				CD = 180,
-				spec = 105,
-			},
 	[6940] = { -- Hand of Sacrifice 牺牲之手 惩戒骑一分半
 				spellID = 740,
 				CD = 90,

@@ -49,7 +49,7 @@ function RDCD:StartCD(bar)
 			if self.endTime - now < 0 then
 				self:SetScript("OnUpdate", nil)
 				self.status:SetAlpha(1)
-				self.right:SetText(" ")
+				self.right:SetText("")
 				if RDCDDB["boardcast"]["ready"] then
 					SendChatMessage(format(RDCD.L["已就绪"], select(6, GetPlayerInfoByGUID(bar.guid)), " \124cff71d5ff\124Hspell:"..bar.spell.."\124h["..GetSpellInfo(bar.spell).."]\124h\124r"), "RAID", nil, nil)
 				end
@@ -150,30 +150,33 @@ end
 
 function RDCD:GroupIndexButton_OnClick(self, button)
 	if RDCDDB["clickable"] then
+		local chatchannel = HasLFGRestrictions() and "INSTANCE_CHAT" or "RAID"
 		if button == "LeftButton" then
 			local player = select(6, GetPlayerInfoByGUID(self.guid)) or ""
 			if UnitInRaid(player) or UnitInParty(player) then
-				SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "RAID")
-				SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(self.spell)), "WHISPER", nil, player)
+				if string.find(self.right:GetText(), ":") then
+					--print(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()))
+					SendChatMessage(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()), chatchannel)
+				else
+					--print(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)))
+					SendChatMessage(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)), chatchannel)
+				end
 			else
 				print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
 			end
 		else
 			for i = 1, #activebars do
 				local player = select(6, GetPlayerInfoByGUID(activebars[i].guid)) or ""
-				if activebars[i].groupind == self.groupind then
+				--if activebars[i].groupind == self.groupind then
 					if UnitInRaid(player) or UnitInParty(player) then
-						if self.groupind == 0 then
-							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "RAID")
-							SendChatMessage(format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "WHISPER", nil, player)
-						else
-							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "RAID")
-							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["准备施放"], player, GetSpellLink(activebars[i].spell)), "WHISPER", nil, player)
+						if self.groupind ~= 0 then
+							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["减伤分组"], player, GetSpellLink(activebars[i].spell)), chatchannel)
+							--print("["..activebars[i].groupind.."] "..format(RDCD.L["减伤分组"], player, GetSpellLink(activebars[i].spell)))
 						end
 					else
 						print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
 					end
-				end
+				--end
 			end
 		end
 	end
@@ -320,34 +323,6 @@ function RDCD:ApplySavedGroup(savedgroup) -- 整个人都不好了...
 		end
 	end
 	RDCD:ArrangeBarsAnchors()
-end
-
-function RDCD:AncGroupIndex()
-	if IsInRaid() then
-		for i = 1, #activebars do
-			if activebars[i].groupind > 0 then
-				local player = select(6, GetPlayerInfoByGUID(activebars[i].guid)) or ""
-				if UnitInRaid(player) or UnitInParty(player) then
-					if i == 1 then
-						SendChatMessage(format(RDCD.L["技能分组2"], activebars[i].groupind), "RAID")
-						SendChatMessage("["..activebars[i].groupind.."]"..player.."--"..GetSpellLink(activebars[i].spell), "RAID")
-						SendChatMessage("["..activebars[i].groupind.."]"..GetSpellLink(activebars[i].spell), "WHISPER", nil, player)
-					elseif activebars[i].groupind > activebars[i-1].groupind then
-						SendChatMessage(format(RDCD.L["技能分组2"], activebars[i].groupind), "RAID")
-						SendChatMessage("["..activebars[i].groupind.."]"..player.."--"..GetSpellLink(activebars[i].spell), "RAID")
-						SendChatMessage("["..activebars[i].groupind.."]"..GetSpellLink(activebars[i].spell), "WHISPER", nil, player)
-					else
-						SendChatMessage("["..activebars[i].groupind.."]"..player.."--"..GetSpellLink(activebars[i].spell), "RAID")
-						SendChatMessage("["..activebars[i].groupind.."]"..GetSpellLink(activebars[i].spell), "WHISPER", nil, player)
-					end
-				else
-					print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
-				end
-			end
-		end
-	else
-		print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..RDCD.L["不在团队中"])
-	end
 end
 
 function RDCD:GetCurrentGroupingSettings()
