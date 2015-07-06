@@ -616,7 +616,6 @@ local OptionMenu = CreateFrame("Frame", "Garan-RaidCooldown_OptionMenu", UIParen
 local OptionList = {
 	{text = RDCD.L["打开控制台"], func = function() RDCD.OPframe:Show() end, notCheckable = true}, 
 	{text = RDCD.L["清除所有分组"], func = function() RDCD:RemoveGroupIndex(0) end, notCheckable = true},  
-	{text = RDCD.L["通报团队分组"], func = function() RDCD:AncGroupIndex() end, notCheckable = true},
 }
 
 MinimapButton:SetScript('OnClick', function(self, button)
