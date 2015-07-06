@@ -49,7 +49,7 @@ function RDCD:StartCD(bar)
 			if self.endTime - now < 0 then
 				self:SetScript("OnUpdate", nil)
 				self.status:SetAlpha(1)
-				self.right:SetText("")
+				self.right:SetText(nil)
 				if RDCDDB["boardcast"]["ready"] then
 					SendChatMessage(format(RDCD.L["已就绪"], select(6, GetPlayerInfoByGUID(bar.guid)), " \124cff71d5ff\124Hspell:"..bar.spell.."\124h["..GetSpellInfo(bar.spell).."]\124h\124r"), "RAID", nil, nil)
 				end
@@ -148,35 +148,43 @@ function RDCD:GroupIndexButton_OnMouseWheel(bar, delta)
 	RDCD:ArrangeBarsAnchors()
 end
 
+local ancind
 function RDCD:GroupIndexButton_OnClick(self, button)
 	if RDCDDB["clickable"] then
 		local chatchannel = HasLFGRestrictions() and "INSTANCE_CHAT" or "RAID"
 		if button == "LeftButton" then
 			local player = select(6, GetPlayerInfoByGUID(self.guid)) or ""
 			if UnitInRaid(player) or UnitInParty(player) then
-				if string.find(self.right:GetText(), ":") then
-					--print(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()))
-					SendChatMessage(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()), chatchannel)
+				if self.right:GetText() then
+					print(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()))
+					--SendChatMessage(format(RDCD.L["技能冷却"], player, GetSpellLink(self.spell), self.right:GetText()), chatchannel)
 				else
-					--print(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)))
-					SendChatMessage(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)), chatchannel)
+					print(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)))
+					--SendChatMessage(format(RDCD.L["已就绪"], player, GetSpellLink(self.spell)), chatchannel)
 				end
 			else
 				print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
 			end
 		else
+			ancind = 1
 			for i = 1, #activebars do
 				local player = select(6, GetPlayerInfoByGUID(activebars[i].guid)) or ""
-				--if activebars[i].groupind == self.groupind then
-					if UnitInRaid(player) or UnitInParty(player) then
-						if self.groupind ~= 0 then
-							SendChatMessage("["..activebars[i].groupind.."] "..format(RDCD.L["减伤分组"], player, GetSpellLink(activebars[i].spell)), chatchannel)
-							--print("["..activebars[i].groupind.."] "..format(RDCD.L["减伤分组"], player, GetSpellLink(activebars[i].spell)))
+				if UnitInRaid(player) or UnitInParty(player) then
+					if activebars[i].groupind ~= 0 then
+						if activebars[i].groupind >= ancind then
+							--print("<<-------[ "..activebars[i].groupind..RDCD.L["减伤分组"].." ]------->>")
+							--print(player..":"..GetSpellLink(activebars[i].spell))
+							SendChatMessage("<<-------[ "..activebars[i].groupind..RDCD.L["减伤分组"].." ]------->>", chatchannel)
+							SendChatMessage(player..":"..GetSpellLink(activebars[i].spell), chatchannel)
+							ancind = activebars[i].groupind+1
+						else
+							--print(player..":"..GetSpellLink(activebars[i].spell))
+							SendChatMessage(player..":"..GetSpellLink(activebars[i].spell), chatchannel)
 						end
-					else
-						print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
 					end
-				--end
+				else
+					print(RDCD.L["|cffA6FFFFGaran-团队冷却|r："]..player..RDCD.L["不在队伍中"])
+				end
 			end
 		end
 	end
@@ -245,7 +253,6 @@ function RDCD:CreatCooldownBar(guid, spellID, cooldown)
 	
 	bar.right = RDCD.createtext(bar.status, "OVERLAY", RDCDDB["height"]-5, "OUTLINE", "RIGHT")
 	bar.right:SetPoint('RIGHT', bar.status, -2, 1)
-	bar.right:SetText(" ")
 	
 	bar:SetScript('OnMouseWheel', function(self, delta)
 		RDCD:GroupIndexButton_OnMouseWheel(bar, delta)
@@ -379,12 +386,18 @@ function RDCD:GetRaidCooldown(spellID, cooldown)
 			if RDCD:IsActive(i) then
 				if(string.lower(char["class"]:gsub(" ", ""))==string.lower(cooldown["class"]):gsub(" ", "")) then
 					if cooldown["spec"] and char["spec"] then
-						if char["spec"]==cooldown["spec"] and not RDCD.cooldownRoster[spellID][i] then 
+						if char["spec"]== cooldown["spec"] and not RDCD.cooldownRoster[spellID][i] then 
 							RDCD.cooldownRoster[spellID][i] = 0
-						elseif char["spec"]~=cooldown["spec"] and RDCD.cooldownRoster[spellID][i] then
+						elseif char["spec"] ~= cooldown["spec"] and RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = nil
 						end
-					elseif cooldown["talent"] and char["talents"]  then
+					elseif cooldown["nospec"] and char["spec"] then
+						if char["spec"] ~= cooldown["nospec"] and not RDCD.cooldownRoster[spellID][i] then 
+							RDCD.cooldownRoster[spellID][i] = 0
+						elseif char["spec"] == cooldown["nospec"] and RDCD.cooldownRoster[spellID][i] then
+							RDCD.cooldownRoster[spellID][i] = nil
+						end
+					elseif cooldown["talent"] and char["talents"] then
 						if char["talents"][spellID] and not RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = 0
 						elseif not char["talents"][spellID] and RDCD.cooldownRoster[spellID][i] then
