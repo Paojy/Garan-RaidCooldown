@@ -99,9 +99,18 @@ RDCD.cooldowns = {
 		class = "PRIEST", 
 		spec = 257,
 	},	
+	[15286] = {	-- 吸血鬼的拥抱
+		index = 104,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "VB",
+		CD = 180,
+		cast = 15,
+		class = "PRIEST",
+		spec = 258,
+	},
 -- Druid
 	[740] = { -- Tranquility 宁静
-		index = 104,
+		index = 105,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "T",
 		CD = 180,
@@ -127,7 +136,7 @@ RDCD.cooldowns = {
 	},
 -- Shaman
 	[98008] = { -- Spirit Link Totem 灵魂链接图腾
-		index = 104,
+		index = 106,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "SLT",
 		CD = 180,
@@ -136,7 +145,7 @@ RDCD.cooldowns = {
 		spec = 264,
 	},
 	[108280] = { -- Healing Tide Totem 治疗之潮图腾
-		index = 105,
+		index = 107,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "HTT",
 		CD = 180,
@@ -154,7 +163,7 @@ RDCD.cooldowns = {
 		spec = 270,
 	},
 	[115310] = {	-- Revival 还魂术
-		index = 107,
+		index = 108,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "REV",
 		CD = 180,
@@ -162,11 +171,12 @@ RDCD.cooldowns = {
 		spec = 270,
 	},
 	--[115072] = {	-- 移花接木
-		--index = 109,
+		--index = 900,
 		--succ = "SPELL_HEAL",
 		--name = "YIHUA",
 		--CD = 15,
 		--class = "MONK",
+		--nospec = 270,
 	--},
 -- Warlock
 	[95750] = { -- Soulstone Resurrection 灵魂石复活
@@ -185,7 +195,7 @@ RDCD.cooldowns = {
 		class = "DEATHKNIGHT",
 	},
 	[51052] = { -- Anti-Magic Zone 反魔法领域
-		index = 110,
+		index = 109,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "AMZ",
 		CD = 120,
@@ -195,16 +205,17 @@ RDCD.cooldowns = {
 	},
 -- Warrior
 	[97462] = { -- Rallying Cry 集结呐喊
-		index = 111,
+		index = 110,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "RC",
 		CD = 180,
 		cast = 10,
 		class = "WARRIOR",
+		nospec = 73,
 	},
 --Rogue
 	[76577] = { -- Smoke Bomb 烟雾弹
-		index = 113,
+		index = 111,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "SBO",
 		CD = 180,
