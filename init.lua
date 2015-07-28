@@ -53,6 +53,8 @@ RDCD.cooldowns = {
 		CD = 120,
 		cast = 12,
 		class = "PALADIN",
+		special_talent_id = 17593,
+		stack = 2,
 	},
 	[1022] = { -- 保护之手
 		index = 202,
@@ -61,6 +63,17 @@ RDCD.cooldowns = {
 		CD = 300,
 		cast = 10,
 		class = "PALADIN",
+		special_talent_id = 17593,
+		stack = 2,
+	},
+	[114039] = { -- 纯净之手
+		index = 203,
+		name = "HOPU",
+		succ = "SPELL_CAST_SUCCESS",
+		CD = 30,
+		cast = 6,
+		class = "PALADIN",
+		talent = 1,
 	},
 -- Priest
 	[62618] = { -- Power Word: Barrier 真言术：障
@@ -73,7 +86,7 @@ RDCD.cooldowns = {
 		spec = 256,
 	},
 	[33206] = { -- Pain Suppression 痛苦压制
-		index = 203,
+		index = 204,
 		name = "PS",
 		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
@@ -91,7 +104,7 @@ RDCD.cooldowns = {
 		spec = 257,
 	},	
 	[47788] = { -- Guardian Spirit 守护之魂
-		index = 204,
+		index = 205,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "GS",
 		CD = 180,
@@ -119,7 +132,7 @@ RDCD.cooldowns = {
 		spec = 105,
 	},
 	[102342] = { -- Ironbark 铁木树皮
-		index = 205,
+		index = 206,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "FE",
 		CD = 120,
@@ -143,6 +156,8 @@ RDCD.cooldowns = {
 		cast = 6,
 		class = "SHAMAN", 
 		spec = 264,
+		special_talent_id = 19273,
+		stack = 2,
 	},
 	[108280] = { -- Healing Tide Totem 治疗之潮图腾
 		index = 107,
@@ -150,11 +165,19 @@ RDCD.cooldowns = {
 		name = "HTT",
 		CD = 180,
 		class = "SHAMAN",
-		--talent = 5,
+		spec = 264,
+	},
+	[114052] = { -- Ascendance 升腾
+		index = 112,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "ASC",
+		CD = 180,
+		class = "SHAMAN",
+		spec = 264,
 	},
  -- Monk
 	[116849] = {	-- Life Cocoon 作茧缚命
-		index = 206,
+		index = 207,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "LIFE",
 		CD = 120,
@@ -176,7 +199,23 @@ RDCD.cooldowns = {
 		--name = "YIHUA",
 		--CD = 15,
 		--class = "MONK",
-		--nospec = 270,
+	--},
+	--[115151] = {	-- 复苏之雾
+		--index = 901,
+		--succ = "SPELL_CAST_SUCCESS",
+		--name = "FUWEI",
+		--CD = 8,
+		--class = "MONK",
+		--special_talent_id = 21678,
+		--stack = 3,
+	--},
+	--[123986] = {	-- 真气爆裂
+		--index = 902,
+		--succ = "SPELL_CAST_SUCCESS",
+		--name = "CBR",
+		--CD = 30,
+		--class = "MONK",
+		--talent = 1,
 	--},
 -- Warlock
 	[95750] = { -- Soulstone Resurrection 灵魂石复活
@@ -199,9 +238,9 @@ RDCD.cooldowns = {
 		succ = "SPELL_CAST_SUCCESS",
 		name = "AMZ",
 		CD = 120,
-		cast = 10,
+		cast = 3,
 		class = "DEATHKNIGHT",
-		talent = 2,
+		talent = 1,
 	},
 -- Warrior
 	[97462] = { -- Rallying Cry 集结呐喊
@@ -212,6 +251,15 @@ RDCD.cooldowns = {
 		cast = 10,
 		class = "WARRIOR",
 		nospec = 73,
+	},
+	[114030] = { -- Vigilance 警戒
+		index = 208,
+		succ = "SPELL_CAST_SUCCESS",
+		name = "VG",
+		CD = 120,
+		cast = 12,
+		class = "WARRIOR",
+		talent = 1,
 	},
 --Rogue
 	[76577] = { -- Smoke Bomb 烟雾弹
