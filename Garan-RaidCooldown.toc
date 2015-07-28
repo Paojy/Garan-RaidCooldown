@@ -1,7 +1,7 @@
 ﻿## Interface: 60200
 ## Title: |cffA6FFFFGaran|r RaidCooldown
 ## Title-zhCN:|cffA6FFFFGaran|r 团队冷却监视模块
-## Version: 1.24
+## Version: 1.25
 ## Notes: Visual Raid Cooldowns
 ## SavedVariables: RDCDDB
 ## Author: Blue
