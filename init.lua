@@ -37,6 +37,21 @@ RDCD.frame:SetFrameLevel(1)
 RDCD.L = {}
 
 RDCD.cooldowns = {
+	--[[
+	[115151] = {	-- 复苏之雾
+		index = 901, -- GUI排列序号
+		succ = "SPELL_CAST_SUCCESS", -- 触发事件
+		name = "FUWEI", -- 名字
+		CD = 8, -- 持续时间
+		class = "MONK", -- 职业
+		
+		spec = 123, -- 需要专精全局ID GetSpecializationInfo(GetActiveSpecGroup())
+		nospec = 123, -- 除了这个专精另外两个专精都有
+		talent = 123, -- 需要天赋全局ID GetTalentInfo(5,2,GetActiveSpecGroup())
+		
+		special_talent_id = 21678, -- 增加充能的天赋
+		stack = 3, -- 点了天赋后的充能次数
+	},]]
 -- Paladin
 	[31821] = { -- Devotion Aura 虔诚光环
 		index = 101,
@@ -50,11 +65,10 @@ RDCD.cooldowns = {
 		index = 201,
 		name = "HOS",
 		succ = "SPELL_CAST_SUCCESS",
-		CD = 120,
+		CD = 150,
 		cast = 12,
 		class = "PALADIN",
-		special_talent_id = 17593,
-		stack = 2,
+		nospec = 70,
 	},
 	[1022] = { -- 保护之手
 		index = 202,
@@ -63,17 +77,6 @@ RDCD.cooldowns = {
 		CD = 300,
 		cast = 10,
 		class = "PALADIN",
-		special_talent_id = 17593,
-		stack = 2,
-	},
-	[114039] = { -- 纯净之手
-		index = 203,
-		name = "HOPU",
-		succ = "SPELL_CAST_SUCCESS",
-		CD = 30,
-		cast = 6,
-		class = "PALADIN",
-		talent = 1,
 	},
 -- Priest
 	[62618] = { -- Power Word: Barrier 真言术：障
@@ -89,7 +92,7 @@ RDCD.cooldowns = {
 		index = 204,
 		name = "PS",
 		succ = "SPELL_CAST_SUCCESS",
-		CD = 180,
+		CD = 240,
 		cast = 8,
 		class = "PRIEST", 
 		spec = 256,
@@ -107,20 +110,11 @@ RDCD.cooldowns = {
 		index = 205,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "GS",
-		CD = 180,
+		CD = 240,
 		cast = 10,
 		class = "PRIEST", 
 		spec = 257,
 	},	
-	[15286] = {	-- 吸血鬼的拥抱
-		index = 104,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "VB",
-		CD = 180,
-		cast = 15,
-		class = "PRIEST",
-		spec = 258,
-	},
 -- Druid
 	[740] = { -- Tranquility 宁静
 		index = 105,
@@ -135,8 +129,8 @@ RDCD.cooldowns = {
 		index = 206,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "FE",
-		CD = 120,
-		cast = 8,
+		CD = 90,
+		cast = 12,
 		class = "DRUID",
 		spec = 105,
 	},
@@ -147,6 +141,7 @@ RDCD.cooldowns = {
 		CD = 600,
 		class = "DRUID",
 	},
+	
 -- Shaman
 	[98008] = { -- Spirit Link Totem 灵魂链接图腾
 		index = 106,
@@ -156,14 +151,13 @@ RDCD.cooldowns = {
 		cast = 6,
 		class = "SHAMAN", 
 		spec = 264,
-		special_talent_id = 19273,
-		stack = 2,
 	},
 	[108280] = { -- Healing Tide Totem 治疗之潮图腾
 		index = 107,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "HTT",
 		CD = 180,
+		cast = 10,
 		class = "SHAMAN",
 		spec = 264,
 	},
@@ -172,6 +166,7 @@ RDCD.cooldowns = {
 		succ = "SPELL_CAST_SUCCESS",
 		name = "ASC",
 		CD = 180,
+		cast = 15,
 		class = "SHAMAN",
 		spec = 264,
 	},
@@ -180,7 +175,7 @@ RDCD.cooldowns = {
 		index = 207,
 		succ = "SPELL_CAST_SUCCESS",
 		name = "LIFE",
-		CD = 120,
+		CD = 180,
 		cast = 12,
 		class = "MONK",
 		spec = 270,
@@ -193,32 +188,8 @@ RDCD.cooldowns = {
 		class = "MONK",
 		spec = 270,
 	},
-	--[115072] = {	-- 移花接木
-		--index = 900,
-		--succ = "SPELL_HEAL",
-		--name = "YIHUA",
-		--CD = 15,
-		--class = "MONK",
-	--},
-	--[115151] = {	-- 复苏之雾
-		--index = 901,
-		--succ = "SPELL_CAST_SUCCESS",
-		--name = "FUWEI",
-		--CD = 8,
-		--class = "MONK",
-		--special_talent_id = 21678,
-		--stack = 3,
-	--},
-	--[123986] = {	-- 真气爆裂
-		--index = 902,
-		--succ = "SPELL_CAST_SUCCESS",
-		--name = "CBR",
-		--CD = 30,
-		--class = "MONK",
-		--talent = 1,
-	--},
 -- Warlock
-	[95750] = { -- Soulstone Resurrection 灵魂石复活
+	[20707] = { -- Soulstone Resurrection 灵魂石复活
 		index = 302,
 		succ = "SPELL_RESURRECT",
 		name = "SR",
@@ -226,58 +197,34 @@ RDCD.cooldowns = {
 		class = "WARLOCK",
 	},
 -- Death Knight
-	[61999] = { -- Raise Ally 亡者大军
+	[61999] = { -- Raise Ally 复活盟友
 		index = 502,
 		succ = "SPELL_RESURRECT", 
 		name = "RA",
 		CD = 600,
 		class = "DEATHKNIGHT",
 	},
-	[51052] = { -- Anti-Magic Zone 反魔法领域
-		index = 109,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "AMZ",
-		CD = 120,
-		cast = 3,
-		class = "DEATHKNIGHT",
-		talent = 1,
-	},
 -- Warrior
-	[97462] = { -- Rallying Cry 集结呐喊
+	[97462] = { -- Rallying Cry 命令怒吼
 		index = 110,
-		succ = "SPELL_CAST_SUCCESS",
 		name = "RC",
+		succ = "SPELL_CAST_SUCCESS",
 		CD = 180,
 		cast = 10,
 		class = "WARRIOR",
 		nospec = 73,
 	},
-	[114030] = { -- Vigilance 警戒
-		index = 208,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "VG",
-		CD = 120,
-		cast = 12,
-		class = "WARRIOR",
-		talent = 1,
-	},
---Rogue
-	[76577] = { -- Smoke Bomb 烟雾弹
-		index = 111,
-		succ = "SPELL_CAST_SUCCESS",
-		name = "SBO",
-		CD = 180,
-		cast = 5,
-		class = "ROGUE",
-	},
 }
 --------------------------------------------------------
 
 RDCD.cooldownReduction = {
-	[6940] = { -- Hand of Sacrifice 牺牲之手 惩戒骑一分半
-				spellID = 740,
-				CD = 90,
-				spec = 70,
+	[740] = { -- 宁静
+				CD = 120,
+				talent = 21713,
+			},
+	[102342] = { -- Ironbark 铁木树皮
+				CD = 60,
+				talent = 21651,
 			},
 }
 

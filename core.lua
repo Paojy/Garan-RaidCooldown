@@ -36,7 +36,7 @@ function RDCD:StartCD(bar)
 		SendChatMessage(format(RDCD.L["使用了"], select(6, GetPlayerInfoByGUID(bar.guid)), "\124cff71d5ff\124Hspell:"..bar.spell.."\124h["..GetSpellInfo(bar.spell).."]\124h\124r"), "RAID", nil, nil)
 	end
 
-	if bar.stack then
+	if RDCD.cooldownRoster[bar.spell][bar.guid]["stack"] then
 		if bar.stack == bar.maxstack then
 			bar.endTime = GetTime() + bar.cd
 			if RDCD.cooldownReduction[bar.spell] then
@@ -88,6 +88,11 @@ function RDCD:StartCD(bar)
 		if RDCD.cooldownReduction[bar.spell] then
 			if RDCD['raidRoster'][bar.guid]['spec'] == RDCD.cooldownReduction[bar.spell]['spec'] then
 				bar.endTime = GetTime() + RDCD.cooldownReduction[bar.spell]['CD']
+			else
+				local talent = RDCD.cooldownReduction[bar.spell]['talent']
+				if RDCD['raidRoster'][bar.guid]['talents'][talent] then
+					bar.endTime = GetTime() + RDCD.cooldownReduction[bar.spell]['CD']
+				end
 			end
 		end
 		bar:SetScript("OnUpdate", function(self, elapsed)
@@ -147,14 +152,26 @@ end
 
 function RDCD:ArrangeBarsAnchors()
 	sort(activebars, function(a, b) return (a.groupind < b.groupind) or (a.groupind == b.groupind and a.index < b.index) or (a.groupind == b.groupind and a.index == b.index and a.guid< b.guid) end)
-	for i = 1, #activebars do
-		activebars[i]:ClearAllPoints()
-		if i == 1 then
-			activebars[i]:SetPoint("TOPLEFT", RDCD.frame, "BOTTOMLEFT", 0, -5)
-		elseif math.fmod(i,RDCDDB["maxline"]) == 1 then
-			activebars[i]:SetPoint("TOPLEFT", activebars[i-RDCDDB["maxline"]], "TOPRIGHT", 8, 0)
-		else
-			activebars[i]:SetPoint("TOPLEFT", activebars[i-1], "BOTTOMLEFT", 0, -5)
+	if a then		
+		for i = 1, #activebars do
+			activebars[i]:ClearAllPoints()
+			if i == 1 then
+				activebars[i]:SetPoint("TOPLEFT", RDCD.frame, "BOTTOMLEFT", 0, -5)
+			elseif math.fmod(i,RDCDDB["maxline"]) == 1 then
+				activebars[i]:SetPoint("TOPLEFT", activebars[i-RDCDDB["maxline"]], "TOPRIGHT", 8, 0)
+			else
+				activebars[i]:SetPoint("TOPLEFT", activebars[i-1], "BOTTOMLEFT", 0, -5)
+			end
+		end
+	else
+		local loc = 0
+		for i = 1, #activebars do
+			if activebars[i].groupind >= loc then
+				activebars[i]:SetPoint("TOPLEFT", RDCD.frame, "BOTTOMLEFT", loc*(RDCDDB["width"] + RDCDDB["height"] + 6), -5)
+				loc = loc + 1
+			else
+				activebars[i]:SetPoint("TOPLEFT", activebars[i-1], "BOTTOMLEFT", 0, -5)
+			end
 		end
 	end
 end
@@ -245,7 +262,7 @@ function RDCD:GroupIndexButton_OnClick(self, button)
 	end
 end
 
-function RDCD:CreatCooldownBar(guid, spellID, cooldown, showstack)
+function RDCD:CreatCooldownBar(guid, spellID, cooldown)
 	local bar = CreateFrame("Frame", nil, RDCD.frame)
 	
 	bar.cd = cooldown.CD
@@ -254,7 +271,7 @@ function RDCD:CreatCooldownBar(guid, spellID, cooldown, showstack)
 	bar.spell = spellID
 	bar.guid = guid
 	
-	if showstack then
+	if cooldown.stack then
 		bar.stack = cooldown.stack
 		bar.maxstack = cooldown.stack
 	end
@@ -284,8 +301,8 @@ function RDCD:CreatCooldownBar(guid, spellID, cooldown, showstack)
 	
 	bar.stacktext = RDCD.createtext(bar.icon, "OVERLAY", RDCDDB["height"]-5, "OUTLINE", "CENTER")
 	bar.stacktext:SetPoint('CENTER', bar.icon, 0, 0)
-	
-	if showstack then		
+
+	if RDCD.cooldownRoster[bar.spell][bar.guid]["stack"] then
 		bar.stacktext:SetText(bar.stack)
 	end
 	
@@ -356,11 +373,7 @@ function RDCD:UpdateBars()
 		for guid, v in pairs(players) do
 			if not players[guid]["created"] then
 				local cooldown = RDCD.cooldowns[spellID]
-				if players[guid]["stack"] then
-					RDCD:CreatCooldownBar(guid, spellID, cooldown, true)
-				else
-					RDCD:CreatCooldownBar(guid, spellID, cooldown, false)
-				end
+				RDCD:CreatCooldownBar(guid, spellID, cooldown)
 				players[guid]["created"] = true
 			end
 		end
@@ -425,16 +438,10 @@ function RDCD:RemoveInvalidBar()
 			activebars[i]:SetScript("OnEvent", nil)
 			activebars[i]:SetScript("OnUpdate", nil)
 			tremove(activebars, i)
-		elseif not RDCD.cooldownRoster[activebars[i].spell][activebars[i].guid]["stack"] and activebars[i]["stack"] then
-			activebars[i]:Hide()
-			activebars[i]:SetScript("OnEvent", nil)
-			activebars[i]:SetScript("OnUpdate", nil)
-			tremove(activebars, i)
-		elseif RDCD.cooldownRoster[activebars[i].spell][activebars[i].guid]["stack"] and not activebars[i]["stack"] then
-			activebars[i]:Hide()
-			activebars[i]:SetScript("OnEvent", nil)
-			activebars[i]:SetScript("OnUpdate", nil)
-			tremove(activebars, i)
+		elseif RDCD.cooldownRoster[activebars[i].spell][activebars[i].guid]["stack"] then
+			activebars[i].stacktext:SetText(activebars[i].stack)
+		else
+			activebars[i].stacktext:SetText("")
 		end
 	end
 end
@@ -470,7 +477,6 @@ function RDCD:GetRaidCooldown(spellID, cooldown)
 						if char["spec"] == cooldown["spec"] and not RDCD.cooldownRoster[spellID][i] then 
 							RDCD.cooldownRoster[spellID][i] = {}
 							RDCD.cooldownRoster[spellID][i]["created"] = false
-							RDCD.cooldownRoster[spellID][i]["stack"] = false
 						elseif char["spec"] ~= cooldown["spec"] and RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = nil
 						end
@@ -478,43 +484,33 @@ function RDCD:GetRaidCooldown(spellID, cooldown)
 						if char["spec"] ~= cooldown["nospec"] and not RDCD.cooldownRoster[spellID][i] then 
 							RDCD.cooldownRoster[spellID][i] = {}
 							RDCD.cooldownRoster[spellID][i]["created"] = false
-							RDCD.cooldownRoster[spellID][i]["stack"] = false
 						elseif char["spec"] == cooldown["nospec"] and RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = nil
 						end
 					elseif cooldown["talent"] and char["talents"] then
-						local hastalent = false
-						for talent_id, talent_info in pairs(char["talents"]) do
-							local talent_spellid = talent_info["spell_id"]
-							if talent_spellid == spellID then
-								hastalent = true
-								break
-							end
-						end
-						if hastalent and not RDCD.cooldownRoster[spellID][i] then
+						local talent = cooldown["talent"]
+						if  char["talents"][talent] and not RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = {}
 							RDCD.cooldownRoster[spellID][i]["created"] = false
-							RDCD.cooldownRoster[spellID][i]["stack"] = false
-						elseif not hastalent and RDCD.cooldownRoster[spellID][i] then
+						elseif not char["talents"][talent] and RDCD.cooldownRoster[spellID][i] then
 							RDCD.cooldownRoster[spellID][i] = nil
 						end
 					elseif not RDCD.cooldownRoster[spellID][i] then 
 						RDCD.cooldownRoster[spellID][i] = {}
 						RDCD.cooldownRoster[spellID][i]["created"] = false
-						RDCD.cooldownRoster[spellID][i]["stack"] = false
 					end
+					
 					if cooldown["special_talent_id"] and cooldown["stack"] and char["talents"] then
 						local sp_id = cooldown["special_talent_id"]
-						if char["talents"][sp_id] then -- 有充能天赋
-							if not RDCD.cooldownRoster[spellID][i]["stack"] then -- 如果以前不显示层数
-								RDCD.cooldownRoster[spellID][i]["created"] = false
+						if RDCD.cooldownRoster[spellID][i] then
+							if char["talents"][sp_id] then -- 有充能天赋
+								RDCD.cooldownRoster[spellID][i]["stack"] = true
+							else
+								RDCD.cooldownRoster[spellID][i]["stack"] = false
 							end
-							RDCD.cooldownRoster[spellID][i]["stack"] = true
-						elseif RDCD.cooldownRoster[spellID][i]["stack"] then -- 无充能天赋，但为充能设置
-							RDCD.cooldownRoster[spellID][i]["stack"] = false
-							RDCD.cooldownRoster[spellID][i]["created"] = false
 						end
 					end
+					
 				end
 			else
 				if RDCD.cooldownRoster[spellID] then
