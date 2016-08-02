@@ -65,12 +65,16 @@ local function createcheckbutton(parent, name, icon, arg1, arg2, ...)
 	end
 	bu:SetScript("OnShow", function(self) self:SetChecked(RDCDDB[arg1][arg2]) end)
 	bu:SetScript("OnClick", function(self) RDCDDB[arg1][arg2] = self:GetChecked() or false end)
-	bu:SetScript("OnEnter", function(self) 
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
-		GameTooltip:SetSpellByID(arg2)
-		GameTooltip:Show()
-	end)
-	bu:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	
+	if GetSpellInfo(arg2) then
+		bu:SetScript("OnEnter", function(self) 
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
+			GameTooltip:SetSpellByID(arg2)
+			GameTooltip:Show()
+		end)
+		bu:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+	end
+	
 	return bu
 end
 
